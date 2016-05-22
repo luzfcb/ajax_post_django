@@ -1,5 +1,5 @@
 from django.core.urlresolvers import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from django.views import generic
@@ -35,9 +35,9 @@ class BasePessoa(object):
             }
         )
         return contexto
-    
 
-class PessoaCreateView(LoginRequiredMixin, FormActionMixin, BasePessoa, generic.CreateView):
+
+class PessoaCreateView(FormActionMixin, BasePessoa, generic.CreateView):
     template_name = 'core/pessoa_form.html'
     success_url = reverse_lazy('core:list')
     form_action = reverse_lazy('core:criar')
@@ -45,6 +45,24 @@ class PessoaCreateView(LoginRequiredMixin, FormActionMixin, BasePessoa, generic.
     def get_context_data(self, **kwargs):
         contexto = super(PessoaCreateView, self).get_context_data(**kwargs)
         return contexto
+
+    def form_valid(self, form):
+        if self.request.is_ajax():
+            d = {
+                'mensagem': 'Salvo com sucesso',
+                'erros': None
+            }
+            return JsonResponse(data=d, status=200)
+        return super(PessoaCreateView, self).form_valid(form)
+
+    def form_invalid(self, form):
+        if self.request.is_ajax():
+            d = {
+                'mensagem': 'Houve erros',
+                'erros': form.errors
+            }
+            return JsonResponse(data=d, status=400)
+        return super(PessoaCreateView, self).form_invalid(form)
 
 
 class PessoaEditView(FormActionMixin, BasePessoa, generic.UpdateView):

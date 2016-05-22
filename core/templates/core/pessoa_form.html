@@ -7,6 +7,9 @@
             {{ form.as_p }}
             <input type="submit" value="Salvar">
         </form>
+        <div id="resultado">
+            <textarea name="" id="resultado-textarea" cols="50" rows="20"></textarea>
+        </div>
     {% endif %}
 {% endblock %}
 
@@ -14,7 +17,51 @@
     <script src="{% static 'core/jquery-2.2.4.min.js' %}"></script>
     <script src="{% static 'core/django-csrftoken.js' %}"></script>
     <script>
-        var formulario = $('#meu-formulario');
-    
+        // https://api.jquery.com/jquery.post/
+        var $formulario = $('#meu-formulario');
+
+        $formulario.submit(function (event) {
+
+            // Stop form from submitting normally
+            event.preventDefault();
+
+            // Get some values from elements on the page:
+            var $form = $(this);
+
+            var conteudoFormulario = $form.serializeArray();
+
+
+            var url = $form.attr("action").replace(/\s/g, "");
+
+            // Send the data using post
+            var posting = $.post(url, conteudoFormulario, 'JSON');
+
+            // Put the results in a div
+            posting.done(function (data, textStatus, jqXHR) {
+                {#                var content = $(data).find("#content");#}
+{#                console.log(data);#}
+                console.log(jqXHR.responseJSON);
+{#                var content = $(data);#}
+{#                $("#resultado").empty().append(content);#}
+                $("#resultado-textarea").empty().val(jqXHR.responseJSON);
+                console.log("enviado com sucesso");
+            });
+            posting.fail(function (jqXHR, textStatus, errorThrown) {
+                console.log(jqXHR.responseJSON);
+{#                var erros = jqXHR.responseJSON;#}
+{#                #}
+{#                var content = $(data).find("#content");#}
+                $("#resultado-textarea").empty().val(jqXHR.responseJSON);
+                console.log("falhou :-(. Erros: ");
+
+            });
+            posting.always(function (data) {
+{#                var content = $(data).find("#content");#}
+{#                $("#resultado").empty().append(content);#}
+                console.log("essa funcao vai executar de qualquer jeito");
+            });
+        });
+
+
     </script>
 {% endblock js %}
