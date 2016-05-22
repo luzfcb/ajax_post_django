@@ -1,0 +1,54 @@
+{% extends 'core/base.html' %}
+
+{% block corpo %}
+
+    <div>
+        <a href="{% url 'core:criar' %}">Criar</a>
+    </div>
+    <div>
+        <a href="{% url 'core:criar' %}" class="criar_via_ajax">Criar via Ajax</a>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>
+                Nome
+            </th>
+            <th>
+                Ação
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% if object_list %}
+            {% for pessoa in object_list %}
+                <tr>
+                    <td>
+                        {{ pessoa.nome }}
+                    </td>
+                    <td>
+                        <a href="{% url 'core:editar' pk=pessoa.pk %}">Editar</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="2">
+                    Nenhuma pessoa cadastrada
+                </td>
+            </tr>
+        {% endif %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>
+                Nome
+            </th>
+            <th>
+                Ação
+            </th>
+        </tr>
+        </tfoot>
+    </table>
+
+{% endblock %}
