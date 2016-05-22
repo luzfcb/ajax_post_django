@@ -2,8 +2,7 @@
 {% load staticfiles %}
 {% block corpo %}
     {% if form %}
-
-        <form action="{{ form_action }}" method="post" name="meu-formulario">
+        <form action="{{ form_action }}" method="post" id="meu-formulario">
             {% csrf_token %}
             {{ form.as_p }}
             <input type="submit" value="Salvar">
@@ -14,4 +13,8 @@
 {% block js %}
     <script src="{% static 'core/jquery-2.2.4.min.js' %}"></script>
     <script src="{% static 'core/django-csrftoken.js' %}"></script>
+    <script>
+        var formulario = $('#meu-formulario');
+    
+    </script>
 {% endblock js %}

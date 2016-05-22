@@ -1,4 +1,5 @@
 from django.core.urlresolvers import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 
 from django.views import generic
@@ -22,9 +23,21 @@ class FormActionMixin(object):
         return contexto
 
 
-class PessoaCreateView(FormActionMixin, generic.CreateView):
+class BasePessoa(object):
     model = models.Pessoa
     form_class = forms.PessoaCreateForm
+
+    def get_context_data(self, **kwargs):
+        contexto = super(BasePessoa, self).get_context_data(**kwargs)
+        contexto.update(
+            {
+                'variavel_a_mais': "Hahahha"
+            }
+        )
+        return contexto
+    
+
+class PessoaCreateView(LoginRequiredMixin, FormActionMixin, BasePessoa, generic.CreateView):
     template_name = 'core/pessoa_form.html'
     success_url = reverse_lazy('core:list')
     form_action = reverse_lazy('core:criar')
@@ -34,9 +47,7 @@ class PessoaCreateView(FormActionMixin, generic.CreateView):
         return contexto
 
 
-class PessoaEditView(FormActionMixin, generic.UpdateView):
-    model = models.Pessoa
-    form_class = forms.PessoaCreateForm
+class PessoaEditView(FormActionMixin, BasePessoa, generic.UpdateView):
     template_name = 'core/pessoa_form.html'
     success_url = reverse_lazy('core:list')
 
