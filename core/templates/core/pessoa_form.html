@@ -1,5 +1,14 @@
 {% extends 'core/base.html' %}
 {% load staticfiles %}
+{% block css %}
+    <style>
+        .vermelho {
+            border-color: red;
+        }
+    </style>
+
+{% endblock css %}
+
 {% block corpo %}
     {% if form %}
         <form action="{{ form_action }}" method="post" id="meu-formulario">
@@ -39,25 +48,36 @@
             // Put the results in a div
             posting.done(function (data, textStatus, jqXHR) {
                 {#                var content = $(data).find("#content");#}
-{#                console.log(data);#}
+                {#                console.log(data);#}
                 console.log(jqXHR.responseJSON);
-{#                var content = $(data);#}
-{#                $("#resultado").empty().append(content);#}
+                {#                var content = $(data);#}
+                {#                $("#resultado").empty().append(content);#}
                 $("#resultado-textarea").empty().val(jqXHR.responseJSON);
                 console.log("enviado com sucesso");
             });
             posting.fail(function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseJSON);
-{#                var erros = jqXHR.responseJSON;#}
-{#                #}
-{#                var content = $(data).find("#content");#}
+                var response_data = jqXHR.responseJSON;
+                var erros = response_data["erros"];
+                var mensagem = response_data["mensagem"];
+
+                for (var prop in erros) {
+                    if (erros.hasOwnProperty(prop)) {
+                        console.log("obj." + prop + " = " + erros[prop]);
+                        var id_elemento = "#id_" + prop;
+                        var $elemento = $(id_elemento);
+                        $elemento.addClass('vermelho');
+
+
+                    }
+                }
                 $("#resultado-textarea").empty().val(jqXHR.responseJSON);
                 console.log("falhou :-(. Erros: ");
 
             });
             posting.always(function (data) {
-{#                var content = $(data).find("#content");#}
-{#                $("#resultado").empty().append(content);#}
+                {#                var content = $(data).find("#content");#}
+                {#                $("#resultado").empty().append(content);#}
                 console.log("essa funcao vai executar de qualquer jeito");
             });
         });
